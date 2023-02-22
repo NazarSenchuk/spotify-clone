@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import dotenv_values
+
+config = dotenv_values(".env") 
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'musics',
     'tailwind',
-    'theme'
+    'theme',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -79,8 +84,14 @@ WSGI_APPLICATION = 'spotify_clone.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER':'postgres',
+        'PASSWORD': 'senchuknazar6',
+        'HOST' : "spotifydatabase.cvovowomxjfc.us-east-1.rds.amazonaws.com",
+        'POST': '5432'
+
+
     }
 }
 
@@ -125,12 +136,20 @@ STATIC_URL = '/static/'
 MEDIA_URL='/media/'
 
 STATIC_ROOT= BASE_DIR/'static_root'
-MEDIA_ROOT= BASE_DIR/ 'media_root'
+MEDIA_ROOT= BASE_DIR/'theme'/'static'/'media_root'
 
 STATICFILES_DIRS=[
     BASE_DIR/'static'
 ]
 
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Tailwind
 TAILWIND_APP_NAME = 'theme'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_QUETYSTRING_AUTH = False
+AWS_ACCESS_KEY_ID = config["AWS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = config['AWS_ACCES_ID']
+AWS_STORAGE_BUCKET_NAME = config['AWS_BUCKETNAME']
+AWS_DEFAULT_ACL = None
+AWS_S3_FILE_OVERWRITE= False
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
